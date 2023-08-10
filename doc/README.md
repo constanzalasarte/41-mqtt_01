@@ -1,6 +1,6 @@
 ![Austral Ingenieria](https://encrypted-tbn0.gstatic.com/images?q=tbn%3AANd9GcQooGo7vQn4t9-6Bt46qZF-UY4_QFpYOeh7kVWzwpr_lbLr5wka)
 
-#       Proyecto 41-mqtt_00
+#       Proyecto 41-mqtt_01
 
  Austral 2023 - Informatica Electronica - Austral
  EAMartinez
@@ -13,11 +13,12 @@ El objetivo de este proyecto es mostrar como una plaqueta realizada con ESP32 y 
  Pulsador Tact
  3 LEDs externos: 1 rojo, 1 amarillo, 1 verde
  3 Resistores de 220 ohm
+ 1 LED interno
  Cables Dupont
 
 ##      Conexiones
 
-  Conectar el riel negativo del _protoboard_ (el azul)  dal GND en placa de desarrollo de ESP32.
+  Conectar el riel negativo del _protoboard_ (el azul)  al GND en placa de desarrollo de ESP32.
 
   Para cada LED externo:  
     * De GND al cátodo del LED
@@ -70,6 +71,33 @@ El objetivo de este proyecto es mostrar como una plaqueta realizada con ESP32 y 
 
   En el caso de suscripción, no hay un formato fijo ya que depende de la existencia de _comodines_ de MQTT
 
+####    Simbolos definidos
+
+  Como es usual, en _platformio.ini_ se suelen definir los GPIO espe©ificos que se van a usar, que, por todo lo ya expkicado, no necesitan ser comentados
+
+  * LED_RED
+  * LED_YEL
+  * LED_GRN
+  * LED_INT
+  * PUSH
+  * IB0
+  * IB1
+
+  Tembién se definen los siguientes símbolos:
+
+  * MAIN_NAME: Nombre principal del _string_ de identificación y de suscripción
+  * SUB_NAME: Nombre adicional del _string_ de identificación y de suscripción
+  * MQTT: entre 0 y 2, para elegir cual de los _brokers_ se va a usar
+  * WIFI: entre 0 y 2, para elegir cual par de identificación y clave de acceso a WiFi se va a usar
+  * SUB_LIST: entre 0 y 2, para elegir cual lista de suscripciones se va a elegir
+
+####    Bibliotecas.
+
+  Se colocan aquí dos bibliotecas a cargar
+
+  * **PubSubClient**: implementa el acceso a brokers MQTT
+  * **TelnetStream**: Para poder enviar por Telnet notificaciones o información de _debugging_; en este caso, especificamente vinculadas con las rutinas de accion de las suscripciones en el archivo _mqtt_actions.cpp_.
+
 ##      Estructura del programa
 
   El programa, que se encuentra en el directorio _src_, está estructurado mediante módulos de C de compilación separada, con lo cual posee una estructura jerárquica claramente establecida:
@@ -91,7 +119,7 @@ El objetivo de este proyecto es mostrar como una plaqueta realizada con ESP32 y 
 
 ####    Manejo de WiFi
 
-  Aparte del archivo de encabezamiento _wifi_ruts.h_ que posee los prototipos de las funciones de manejo de WiFi, se encontaráel archivo _wifi_ruts.cpp_ que justamente tiene la implementación de dichos prototipos.
+  Aparte del archivo de encabezamiento _wifi_ruts.h_ que posee los prototipos de las funciones de manejo de WiFi, se encontará el archivo _wifi_ruts.cpp_ que justamente tiene la implementación de dichos prototipos.
   También existe un archivo de configuración _wifi_data.h_ donde se pueden colocar la identificación y la clave para el acceso de hasta tres lugares que sean usuales en el trabajo de desarrollo del grupo; cual de esos lugares en definitiva se conectará en el momento de ejecución, depende del símbolo _WIFI_ que se encuentra definido en _plaformio.ini_.
 
 ####    Manejo de hardware de la plaqueta
@@ -107,7 +135,7 @@ El objetivo de este proyecto es mostrar como una plaqueta realizada con ESP32 y 
   _mqtt.cpp_: implementa las funciones principales cuyos prototipos están en _mqtt.h_, archivo que, a su vez, fué incluído dentro de _main.cpp_ como ya se explico más arriba.
   Las tres funciones públicas que implementa este archivo son las llamadas desde _main.cpp_
 
-  Utilizando este archivo, se van a recibir las novedades del _broker_ a que se han suscripto y estas novedades, en este caso particular, sirven para cambiar el estado de los 4 LEDs; por lo tanto, esas acciones se realizarán mediante funciones cuyos prototipos están definidos en _mqtt_actions.h_ y que están implementadas en _mqtt_actions.cpp_
+  Utilizando este archivo, se van a recibir las novedades del _broker_ a que se han suscripto y estas novedades, en este caso particular, sirven para cambiar el estado de los 4 LEDs; por lo tanto, esas acciones se realizarán mediante funciones cuyos prototipos están definidos en _mqtt_actions.h_ y que están implementadas en _mqtt_actions.cpp_; de hecho, la inclusión de enviar información por Telnet se incluyo específicamente para enviar la información de la rutina de acción vinculada a cada una de las suscripciones cada vez que se recibia la información de un cambio en alguna de las suscriopciones, para el caso que el ESP32 no estuviese vinculado al monitor de PlatformIO mediante USB.
 
   Se dispone de un archivo adicional referido a _mqtt_ cual es _mqtt_def.h_: este archivo, incluído en _mqtt.cpp_, es particularmente importante, ya que sirve para hacer configuraciones en relación con el _broker_.
 
@@ -116,13 +144,14 @@ El objetivo de este proyecto es mostrar como una plaqueta realizada con ESP32 y 
   El proyecto se configura mendiante tres elementos:
 
 #### Configuración de _harwdare_
+
   Este proyecto permite tener hasta 4 plaquetas con el mismo programa intercomunicadas en la nube IoT; para ello, y para que su función en IoT sea diferenciada de sus hermanas, es necesario identificarlas, por lo cual se dispone de dos bits con las que se las puede numerar de 0 a 3, como se dijo previamente; para ello, ver como conectar esos dos bits bajo el subtítulo _Conexiones_.
 
 #### Configuración mediante el archivo _mqtt_def.h_
 
   **C1 -> List of topics and actions**: En este arreglo de estructuras, se encuentran los pares formados por _tópico_ y _acción_ que se pueden ofrecer para suscribirse en el _broker_. Solo hace falta configurar en este item si se agregan tópicos adicionales.  
 
-  **C2 -> Subscription lists**: aquí aparece la lista de suscripciones que se desea realizar; obsérvese que, para generar el _string_ de suscripción, se comienza con _'MAIN_NAME/'SUB_NAME'/_ y se continúa con el sub-string indicado en cada ítem de esta lista; obviamente, los caracteres reservados **#** y **+** son los consasbidos comodines de MQTT (En caso de duda, ver la función _init_subscriptions_ en el archivo _mqtt.cpp_). Notar que, con la finalidad de poder probar cómodamente otras suscricpiones posibles y comprender como funciona MQTT, se ha pensado preparar hasta 3 juegos de suscripciones que se pueden elegir desde _platformio.ini_ mediante el símbolo _SUB_LIST_.  
+  **C2 -> Subscription lists**: aquí aparece la lista de suscripciones que se desea realizar; obsérvese que, para generar el _string_ de suscripción, se comienza con _'MAIN_NAME/'SUB_NAME'/_ y se continúa con el sub-string indicado en cada ítem de esta lista o tabla; obviamente, los caracteres reservados **#** y **+** son los consasbidos comodines de MQTT (En caso de duda, ver la función _init_subscriptions_ en el archivo _mqtt.cpp_). Notar que, con la finalidad de poder probar cómodamente otras suscripciones posibles y comprender como funciona MQTT, se ha pensado preparar hasta 3 juegos de suscripciones que se pueden elegir desde _platformio.ini_ mediante el símbolo _SUB_LIST_.  
 
   **C3 -> Macros for id strings**: Aqui se usan las definiciones que estan en _platformio.ini_ de los símbolos _MAIN_NAME_, _SUB_NAME_ y, además, el número de placa o equipo en cuestión para generar los _strings_ de identificación para el _broker_, tanto sea para el _log_ en el _broker_, como para la publicación de un tópico o para la suscripción.  
 
@@ -131,6 +160,15 @@ El objetivo de este proyecto es mostrar como una plaqueta realizada con ESP32 y 
 #### Configuración mediante _platformio.ini_
 
   Esta configuración acompaña las anteriores y ya se explicó como influye en la configuración total.
+
+  Luego que Ud. cargue este proyecto en su computadora, va a encontrar las siguientes configuraciones que aparecen por _default_ y que son las que quedaron luego que el profesor mostrase el funcionamiemto en clase:
+
+  **MQTT** = 0 -> apunta al _mosquitto_ corriendo en la máquina. Si va a usar esta configuración, recuerde de cambiar en _mqtt_def.h_ el número de IP de la máquina donde está corriendo _mosquitto_ a usar
+
+  **WIFI** = 1 -> apunta a la definición del WiFi de la Facultad; si está trabajando en otro lugar, recuerde en cambiar la identificación y la palabra clave de ese lugar en el archivo _mqtt_def.h_ y también cambiar en _platformio.ini_ en el símbolo **WIFI** el número que apunta a ese lugar.
+
+  **SUB_LIST** = 1 apunta a la lista de suscripciones que se usaron para mostar en clase. Se recomienda que, si recién empieza a trabjar con _MQTT_ y está haciendo las primeras pruebas, coloque en este parámetro el valor **0** que permite suscribirse a todo.
+
 
 ##  Prueba con broker MQTT mosquitto
 
@@ -153,9 +191,9 @@ Normalmente, el solo hecho de cargarlo ya lo hace correr y queda esperando conex
 
 Se han construido 4 placas de hardware con ESP32 una de las cuales posee 3 LEDs (rojo, amarillo, verde); obviamente, las cuatro placas utilizan el led interno de los ESP32 asi como las 4 placas poseen un pulsador; se muestra foto más abajo.
 
-La forma mas rápida de construir una placa única que pueda utilizarse en esta prueba es solamente conectar el pulsador entre el GPIO 'PUSH' y GND (lo cual puede hacerse solamente con dos cables); la identificacion de placa en ese caso sera la 03, ya que los GPIO IB0 e IB1 quedna en sin conexión externa y están con _pull_up_ interno.
+La forma mas rápida de construir una placa única que pueda utilizarse en esta prueba es solamente conectar el pulsador entre el GPIO 'PUSH' y GND (lo cual puede hacerse solamente con dos cables); la identificacion de placa en ese caso sera la 03, ya que los GPIO IB0 e IB1 quedan en sin conexión externa y están con _pull_up_ interno; de hecho, si el alumno quiere hacer parte de las purebas hechas en clase, esta es la forma rápida que se recomienda para construir una sola placa que se conecte al sistema.
 
-Todas las placas, cuando arrancan, se conectan al broker _mosquitto_, leen su número de placa y se suscriben a las novedades como se ve en el archivo _mqtt_def.h_ para el caso de la configuración SUB_LIST = 0 que corresponde que va a recibir las novedades de cualquier origen.
+Todas las placas, cuando arrancan, se conectan al broker _mosquitto_, leen su número de placa y se suscriben a las novedades como se ve en el archivo _mqtt_def.h_; para el caso recomendado para las primeras pruebas, que corresponde a la configuración SUB_LIST = 0, va a recibir las novedades de cualquier origen.
 
 Obviamente, aquellas placas que no tienen LEDs externos no podran mostrar la suscripcion que reciben.
 
@@ -165,14 +203,14 @@ Se aconseja para probar cada placa, conectarlas sucesivamente a la PC por el cab
 
 ####    Comandos de los clientes de _mosquitto_
 
-Existen dos clientes distintos de _mosquitto_:
+Existen dos clientes distintos de _mosquitto_ que pueden usarse para _debugging_ de la instalación::
 
 * Uno para publicar novedades, que se denomina _mosquitto_pub_
 * Uno para suscribirse a novedades, que se denomina _mosquitto_sub_
 
 Para las pruebas conviente tener abiertas dos terminales, una para poder publicar y la otra para poder observar las novedades suscriptas; se aconseja tener abierta una tercera terminal con el monitor serie conectado al ESP32
 
-El comando para publicación sera de este tipo (se muestran todas las publicaciones posibles teniendo en cuenta las suscripciones realizadas en el ESP32); observese que se ha usado para la publicacion un numero de plaqueta o de equipo 99, para indicar que no se trata de ninguna de las placas posibles. Para cada publicación, debe enviarse el comando interactivamente, luego de modificar los argumentos
+El comando para publicación será de este tipo (se muestran todas las publicaciones posibles teniendo en cuenta las suscripciones realizadas en el ESP32); obsérvese que se ha usado para la publicacion un numero de plaqueta o de equipo 99, para indicar que no se trata de ninguna de las placas posibles. Para cada publicación, debe enviarse el comando interactivamente, luego de modificar los argumentos
 
 ~~~
 mosquitto_pub -t AustralFI/inel00/99/tr -m any        <- tr significa Toggle Red
