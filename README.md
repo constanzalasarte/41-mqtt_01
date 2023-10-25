@@ -1,6 +1,8 @@
 ![Austral Ingenieria](https://encrypted-tbn0.gstatic.com/images?q=tbn%3AANd9GcQooGo7vQn4t9-6Bt46qZF-UY4_QFpYOeh7kVWzwpr_lbLr5wka)
 
-#   Project 41-mqtt_00
+#   Project 41-mqtt_01
+
+## Team: Valentina Isabella Valenzi, Francisco Luca Cavallaro, Catalina Ghiglione y Constanza Lasarte
 
 ##  First example of MQTT with ESP32
 
