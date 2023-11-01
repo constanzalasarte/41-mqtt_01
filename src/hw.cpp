@@ -13,7 +13,7 @@
  *  Private variables
  */
 
-static int buttonState;                     // current reading from the input pin (pushbutton)
+static int buttonState = HIGH;                     // current reading from the input pin (pushbutton)
 static int lastButtonState = HIGH;          // previous reading from the input pin (pushbutton)
 
 static unsigned long lastDebounceTime = 0; // the last time the output pin was toggled
@@ -34,23 +34,81 @@ verify_push(void)
 {
     int reading, result;
 
-    result = 0;
-    reading = digitalRead(PUSH);                        // Now read the button state
+    result = NO_BUTTON;
 
-    if (reading != lastButtonState)                     // If the pushbutton state changed (due to noise or pressing it), then ....
-        lastDebounceTime = millis();                    // ... reset the debouncing timer
-    else
-    if ((millis() - lastDebounceTime) > debounceDelay)  // If the pin_button state has changed, after the debounce time
-    {
-        if (reading != buttonState)                     // And if the current reading is different than the current buttonState
-        {
+    // Check the state of the first button
+    reading = digitalRead(PUSH1);
+    if (reading != lastButtonState) {
+        lastDebounceTime = millis();
+    } else if ((millis() - lastDebounceTime) > debounceDelay) {
+        if (reading != buttonState) {
             buttonState = reading;
-            if (buttonState == LOW)
-                result = BUTTON;
+            if (buttonState == LOW) {
+                return BUTTON1; // Button 1 is pressed
+            }
         }
     }
-    lastButtonState = reading;                          // Save the reading. Next time through the loop, it'll be the lastButtonState
-    return result;
+
+    reading = digitalRead(PUSH2);
+    if (reading != lastButtonState) {
+        lastDebounceTime = millis();
+    } else if ((millis() - lastDebounceTime) > debounceDelay) {
+        if (reading != buttonState) {
+            buttonState = reading;
+            if (buttonState == LOW) {
+                return BUTTON2; // Button 2 is pressed
+            }
+        }
+    }
+
+    reading = digitalRead(PUSH3);
+    if (reading != lastButtonState) {
+        lastDebounceTime = millis();
+    } else if ((millis() - lastDebounceTime) > debounceDelay) {
+        if (reading != buttonState) {
+            buttonState = reading;
+            if (buttonState == LOW) {
+                return BUTTON3; 
+            }
+        }
+    }
+
+    reading = digitalRead(PUSH4);
+    if (reading != lastButtonState) {
+        lastDebounceTime = millis();
+    } else if ((millis() - lastDebounceTime) > debounceDelay) {
+        if (reading != buttonState) {
+            buttonState = reading;
+            if (buttonState == LOW) {
+                return BUTTON4; 
+            }
+        }
+    }
+
+    reading = digitalRead(PUSH5);
+    if (reading != lastButtonState) {
+        lastDebounceTime = millis();
+    } else if ((millis() - lastDebounceTime) > debounceDelay) {
+        if (reading != buttonState) {
+            buttonState = reading;
+            if (buttonState == LOW) {
+                return BUTTON5; 
+            }
+        }
+    }
+
+    reading = digitalRead(PUSH6);
+    if (reading != lastButtonState) {
+        lastDebounceTime = millis();
+    } else if ((millis() - lastDebounceTime) > debounceDelay) {
+        if (reading != buttonState) {
+            buttonState = reading;
+            if (buttonState == LOW) {
+                return BUTTON6; 
+            }
+        }
+    }
+    return NO_BUTTON;
 }
 
 /*
@@ -77,19 +135,16 @@ get_board_num(void)
 void
 init_hw(void)
 {
-    pinMode(LED_RED, OUTPUT);
-    pinMode(LED_YEL, OUTPUT);
-    pinMode(LED_GRN, OUTPUT);
-    pinMode(LED_INT, OUTPUT);
 
-    digitalWrite(LED_RED,LOW);
-    digitalWrite(LED_YEL,LOW);
-    digitalWrite(LED_GRN,LOW);
-    digitalWrite(LED_INT,LOW);
+    pinMode(PUSH1, INPUT);
+    pinMode(PUSH2, INPUT);
+    pinMode(PUSH3, INPUT);
+    pinMode(PUSH4, INPUT);
+    pinMode(PUSH5, INPUT);
+    pinMode(PUSH6, INPUT);
 
-    pinMode(PUSH, INPUT_PULLUP);
-    pinMode(IB0,INPUT_PULLUP);
-    pinMode(IB1,INPUT_PULLUP);
+    pinMode(IB0,INPUT);
+    pinMode(IB1,INPUT);
 }
 
 /*

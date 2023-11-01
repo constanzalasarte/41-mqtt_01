@@ -27,10 +27,26 @@ setup(void)
     TelnetStream.begin();
 }
 
-void
-loop(void)
-{
-    if( verify_hw() == BUTTON )             //  Verify all input hardware
-        do_publish("button","button");
-    test_mqtt();                            //  Test news from broker
+void loop(void) {
+    int buttonPressed = verify_hw(); // Verify all input hardware
+
+    if(buttonPressed != 7){
+        printf("Button pressed = %d\n", buttonPressed);
+    }
+
+    if (buttonPressed == 1) {
+        do_publish("button1", "AustralFI/inel21/1/button1"); // Publish to topic for button 1
+    } else if (buttonPressed == 2) {
+        do_publish("button2", "AustralFI/inel21/1/button2"); 
+    } else if (buttonPressed == 3) {
+        do_publish("button3", "AustralFI/inel21/1/button3"); 
+    } else if (buttonPressed == 4) {
+        do_publish("button4", "AustralFI/inel21/1/button4"); 
+    } else if (buttonPressed == 5) {
+        do_publish("button5", "AustralFI/inel21/1/button5"); 
+    } else if (buttonPressed == 6) {
+        do_publish("button6", "AustralFI/inel21/1/button6"); 
+    }
+    
+    test_mqtt(); // Test news from the broker
 }
