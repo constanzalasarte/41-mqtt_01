@@ -54,6 +54,12 @@ static const char *subs[] =
     "1/button4",
     "1/button5",
     "1/button6",
+    "03/button1",
+    "03/button2",
+    "03/button3",
+    "03/button4",
+    "03/button5",
+    "03/button6",
 
 #elif (SUB_LIST==2)
     "+/clear",
@@ -86,7 +92,7 @@ static const char *subs[] =
     #define BROKER_USER ""
     #define BROKER_PASS ""
 #elif (MQTT==1)
-    #define BROKER_NAME "44.218.56.34"          //  Mosquitto outside local network
+    #define BROKER_NAME "54.162.65.213"            //  Mosquitto outside local network
     #define BROKER_PORT 1883
     #define BROKER_USER ""
     #define BROKER_PASS ""
