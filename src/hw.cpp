@@ -14,10 +14,16 @@
  */
 
 static int buttonState = HIGH;                     // current reading from the input pin (pushbutton)
-static int lastButtonState = HIGH;          // previous reading from the input pin (pushbutton)
+static int lastButtonState = 0;          // previous reading from the input pin (pushbutton)
 
 static unsigned long lastDebounceTime = 0; // the last time the output pin was toggled
 static unsigned long debounceDelay = 50;   // the debounce time; increase if the output flickers
+
+static int pushGPIO[]=
+{
+    PUSH1 ,PUSH2, PUSH3 ,PUSH4 ,PUSH5 ,PUSH6
+};
+#define NUMPUSH (sizeof( pushGPIO)/sizeof(*pushGPIO))
 
 /*
  *  Private functions
@@ -32,83 +38,36 @@ static unsigned long debounceDelay = 50;   // the debounce time; increase if the
 static int
 verify_push(void)
 {
-    int reading, result;
+    int reading; 
+    for (int i = 0; i<NUMPUSH; ++i){
+        reading = digitalRead(pushGPIO[i]); 
+        if(verify_uniquePush(digitalRead(pushGPIO[i])) != 0){
+            printf("entre a push%d", i);
+            // lastButtonState = digitalRead(pushGPIO[i]);
+            return i+1;
+        }  
+    }
+    return 0;
+}
 
-    result = NO_BUTTON;
+int
+verify_uniquePush(int reading){
 
-    // Check the state of the first button
-    reading = digitalRead(PUSH1);
     if (reading != lastButtonState) {
         lastDebounceTime = millis();
-    } else if ((millis() - lastDebounceTime) > debounceDelay) {
-        if (reading != buttonState) {
-            buttonState = reading;
-            if (buttonState == LOW) {
-                return BUTTON1; // Button 1 is pressed
-            }
-        }
+    } 
+    // else if ((millis() - lastDebounceTime) > debounceDelay) {
+    //     if (reading != buttonState) {
+    //         buttonState = reading;
+    //         if (buttonState == LOW) {
+    //             result = 1; // Button 1 is pressed
+    //         }
+    //     }
+    // }
+    else{
+        return 1;
     }
-
-    reading = digitalRead(PUSH2);
-    if (reading != lastButtonState) {
-        lastDebounceTime = millis();
-    } else if ((millis() - lastDebounceTime) > debounceDelay) {
-        if (reading != buttonState) {
-            buttonState = reading;
-            if (buttonState == LOW) {
-                return BUTTON2; // Button 2 is pressed
-            }
-        }
-    }
-
-    reading = digitalRead(PUSH3);
-    if (reading != lastButtonState) {
-        lastDebounceTime = millis();
-    } else if ((millis() - lastDebounceTime) > debounceDelay) {
-        if (reading != buttonState) {
-            buttonState = reading;
-            if (buttonState == LOW) {
-                return BUTTON3; 
-            }
-        }
-    }
-
-    reading = digitalRead(PUSH4);
-    if (reading != lastButtonState) {
-        lastDebounceTime = millis();
-    } else if ((millis() - lastDebounceTime) > debounceDelay) {
-        if (reading != buttonState) {
-            buttonState = reading;
-            if (buttonState == LOW) {
-                return BUTTON4; 
-            }
-        }
-    }
-
-    reading = digitalRead(PUSH5);
-    if (reading != lastButtonState) {
-        lastDebounceTime = millis();
-    } else if ((millis() - lastDebounceTime) > debounceDelay) {
-        if (reading != buttonState) {
-            buttonState = reading;
-            if (buttonState == LOW) {
-                return BUTTON5; 
-            }
-        }
-    }
-
-    reading = digitalRead(PUSH6);
-    if (reading != lastButtonState) {
-        lastDebounceTime = millis();
-    } else if ((millis() - lastDebounceTime) > debounceDelay) {
-        if (reading != buttonState) {
-            buttonState = reading;
-            if (buttonState == LOW) {
-                return BUTTON6; 
-            }
-        }
-    }
-    return NO_BUTTON;
+    return 0;
 }
 
 /*
@@ -135,16 +94,29 @@ get_board_num(void)
 void
 init_hw(void)
 {
+    for (int i = 0; i<NUMPUSH; ++i)
+        pinMode(pushGPIO[i],INPUT_PULLUP);
+    #if 0    
+    pinMode(PUSH1, INPUT_PULLUP);
+    pinMode(PUSH2, INPUT_PULLUP);
+    pinMode(PUSH3, INPUT_PULLUP);
+    pinMode(PUSH4, INPUT_PULLUP);
+    pinMode(PUSH5, INPUT_PULLUP);
+    pinMode(PUSH6, INPUT_PULLUP);
+    #endif
 
-    pinMode(PUSH1, INPUT);
-    pinMode(PUSH2, INPUT);
-    pinMode(PUSH3, INPUT);
-    pinMode(PUSH4, INPUT);
-    pinMode(PUSH5, INPUT);
-    pinMode(PUSH6, INPUT);
+    // pinMode(IB0,INPUT);
+    // pinMode(IB1,INPUT);
 
-    pinMode(IB0,INPUT);
-    pinMode(IB1,INPUT);
+    #if 0
+        for (;;){
+            for (int i = 0; i<NUMPUSH; ++i)
+                Serial.printf("[%d]: %d",i, digitalRead(pushGPIO[i]));
+            Serial.printf("\n");    
+            delay(500);
+        
+        }
+    #endif
 }
 
 /*
