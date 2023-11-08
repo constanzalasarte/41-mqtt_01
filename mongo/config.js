@@ -3,14 +3,14 @@ var config = {};
 config.debug = process.env.DEBUG || true;
 
 config.mqtt  = {};
-config.mqtt.namespace = process.env.MQTT_NAMESPACE || 'AustralFI/inel21/00/#';
-config.mqtt.hostname  = process.env.MQTT_HOSTNAME  || '54.146.49.53';
-config.mqtt.port      = process.env.MQTT_PORT      || 1883;
+config.mqtt.namespace = 'AustralFI/inel21/00/#';
+config.mqtt.hostname  = '54.146.49.53';
+config.mqtt.port      = 1883;
 
 config.mongodb = {};
-config.mongodb.hostname   = process.env.MONGODB_HOSTNAME   || '3.87.179.153';
-config.mongodb.port       = process.env.MONGODB_PORT       || 27017;
-config.mongodb.database   = process.env.MONGODB_DATABASE   || 'test';
-config.mongodb.collection = process.env.MONGODB_COLLECTION || 'message';
+config.mongodb.hostname   = '54.81.244.87';
+config.mongodb.port       = 27017;
+config.mongodb.database   = 'vending-machine-db';
+config.mongodb.collection = 'message';
 
 module.exports = config;
