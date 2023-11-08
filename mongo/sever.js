@@ -16,7 +16,7 @@ const database = dbclient.db(config.mongodb.database);
 const haiku = database.collection(config.mongodb.collection);
 
 client.on("connect", () => {
-  client.subscribe("+", (err) => {
+  client.subscribe(config.mqtt.namespace, (err) => {
     if (!err) {
      console.log("Client connected");
     }
