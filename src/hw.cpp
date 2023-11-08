@@ -42,7 +42,6 @@ verify_push(void)
     for (int i = 0; i<NUMPUSH; ++i){
         reading = digitalRead(pushGPIO[i]); 
         if(verify_uniquePush(digitalRead(pushGPIO[i])) != 0){
-            printf("entre a push%d", i);
             // lastButtonState = digitalRead(pushGPIO[i]);
             return i+1;
         }  
@@ -94,9 +93,9 @@ get_board_num(void)
 void
 init_hw(void)
 {
-    for (int i = 0; i<NUMPUSH; ++i)
-        pinMode(pushGPIO[i],INPUT_PULLUP);
-    #if 0    
+    // for (int i = 0; i<NUMPUSH; ++i)
+        // pinMode(pushGPIO[i],INPUT_PULLUP);
+    #if 1    
     pinMode(PUSH1, INPUT_PULLUP);
     pinMode(PUSH2, INPUT_PULLUP);
     pinMode(PUSH3, INPUT_PULLUP);
@@ -105,8 +104,8 @@ init_hw(void)
     pinMode(PUSH6, INPUT_PULLUP);
     #endif
 
-    // pinMode(IB0,INPUT);
-    // pinMode(IB1,INPUT);
+    pinMode(IB0,INPUT);
+    pinMode(IB1,INPUT);
 
     #if 0
         for (;;){
