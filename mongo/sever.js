@@ -18,12 +18,12 @@ const counter = 1;
 client.on("connect", () => {
   client.subscribe(config.mqtt.namespace, (err) => {
     if (!err) {
-     console.log("Client connected");
-     const product1 = new Product({productId: 1, name: 'Producto 1', price: 2, quantity: 1})
-    const product2 = new Product({productId: 2, name: 'Producto 2', price: 2, quantity: 0})
-    const product3 = new Product({productId: 3, name: 'Producto 3', price: 2, quantity: 0})
-    const product4 = new Product({productId: 4, name: 'Producto 4', price: 2, quantity: 0})
-    const product5 = new Product({productId: 5, name: 'Producto 5', price: 2, quantity: 0})
+      console.log("Client connected");
+      const product1 = new Product({productId: 1, name: 'Producto 1', price: 2, quantity: 1})
+      const product2 = new Product({productId: 2, name: 'Producto 2', price: 2, quantity: 0})
+      const product3 = new Product({productId: 3, name: 'Producto 3', price: 2, quantity: 0})
+      const product4 = new Product({productId: 4, name: 'Producto 4', price: 2, quantity: 0})
+      const product5 = new Product({productId: 5, name: 'Producto 5', price: 2, quantity: 0})
     }
   });
 
