@@ -87,7 +87,7 @@ static const char *subs[] =
  */
 
 #if (MQTT==0)                                       
-    #define BROKER_NAME "54.146.49.53"         //  Mosquitto in local network
+    #define BROKER_NAME "54.224.56.200"         //  Mosquitto in local network
     #define BROKER_PORT 1883
     #define BROKER_USER ""
     #define BROKER_PASS ""

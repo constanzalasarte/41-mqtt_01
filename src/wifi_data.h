@@ -9,14 +9,14 @@
  */
 
 #if (WIFI==0)                   //  Home settings
-    #define MY_SSID "edumel2.4"
-    #define MY_PASS "geheim1943"
+    #define MY_SSID "Fibertel WiFi814 2.4GHz"
+    #define MY_PASS "0142109756"
 #elif (WIFI==1)                 //  University settings
     #define MY_SSID "UA-Alumnos"
     #define MY_PASS "41umn05WLC"
 #elif (WIFI==2)                 //  Other place settings
-    #define MY_SSID "UA-Alumnos"
-    #define MY_PASS "41umn05WLC"
+    #define MY_SSID "coni (2)"
+    #define MY_PASS "coni3558"
 #else
     #error  "WIFI symbol out of range"
 #endif
