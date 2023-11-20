@@ -8,12 +8,14 @@ const client = mqtt.connect(mqttUri);
 
 // import { MongoClient } from "mongodb";
 const mongoose = require('mongoose');
-const Product = mongoose.model("Product", productSchema);
 
 // Replace the uri string with your MongoDB deployment's connection string.
 var mongoUri = "mongodb://admin:admin@" + config.mongodb.hostname + "/" + config.mongodb.database;
 
 mongoose.connect(mongoUri)
+
+const Product = mongoose.model("Product", productSchema);
+const Transaction = mongoose.model("Transaction", transactionSchema);
 
 client.on("connect", () => {
   client.subscribe(config.mqtt.namespace, async (err) => {
@@ -71,6 +73,20 @@ client.on("message", async (topic, message) => {
 
     const stock = updatedProduct.stock !== undefined ? updatedProduct.stock.toString() : 'Stock undefined';
     console.log("Now there are " + stock + " products of the product " + updatedProduct.name);
+
+    const transaction = new Transaction({productId: productId, date: Date.now()})
+    await transaction.save()
+
+    try {
+      const allTransactions = await Transaction.find();
+      
+      allTransactions.forEach((transaction) => {
+        console.log(`Transaction ID: ${transaction._id}, Product ID: ${transaction.productId}, Date: ${transaction.date}`);
+      });
+      
+    } catch (error) {
+      console.error("Error fetching transactions:", error);
+    }
 
   }
   });
