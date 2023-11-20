@@ -1,7 +1,6 @@
 const mqtt = require("mqtt");
 var config = require("./config");
-var { productSchema } = require("./schema");
-var { ConnectOptions } = require('mongoose')
+var { productSchema, transactionSchema } = require("./schema");
 
 var mqttUri  = 'mqtt://' + config.mqtt.hostname + ':' + config.mqtt.port;
 const client = mqtt.connect(mqttUri);
@@ -37,6 +36,8 @@ client.on("connect", () => {
 
      const product6 = new Product({productId: 6, name: 'Producto 6', price: 2, stock: 0})
      await product6.save().then(() => console.log("product 6 created"));
+     const transaction = new Transaction({productId: product6.productId, date: Date.now()})
+     await transaction.save()
     }
     else{
       console.log("Client not connected");
@@ -74,7 +75,7 @@ client.on("message", async (topic, message) => {
     const stock = updatedProduct.stock !== undefined ? updatedProduct.stock.toString() : 'Stock undefined';
     console.log("Now there are " + stock + " products of the product " + updatedProduct.name);
 
-    const transaction = new Transaction({productId: productId, date: Date.now()})
+    const transaction = new Transaction({productId: product.productId, date: Date.now()})
     await transaction.save()
 
     try {

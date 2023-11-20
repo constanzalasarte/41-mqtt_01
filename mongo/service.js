@@ -1,8 +1,17 @@
 const express = require('express');
 const cors = require('cors');
-const { Transaction, Product } = require('./schema.js'); // Import both models
+var config = require("./config");
+var { productSchema, transactionSchema } = require("./schema");
+const mongoose = require('mongoose');
 const app = express();
 const moment = require('moment');
+
+var mongoUri = "mongodb://admin:admin@" + config.mongodb.hostname + "/" + config.mongodb.database;
+
+mongoose.connect(mongoUri)
+
+const Product = mongoose.model("Product", productSchema);
+const Transaction = mongoose.model("Transaction", transactionSchema);
 
 app.use(cors({
     origin: 'http://localhost:3000',
@@ -26,7 +35,7 @@ app.get('/api/most-sold-products', async (req, res) => {
 
         const mostSoldProductsDetails = await Promise.all(
             mostSoldProducts.map(async (product) => {
-                const productDetails = await Product.findById(product._id);
+                const productDetails = await Product.find().byId(product._id);
                 return { ...productDetails.toObject(), count: product.count };
             })
         );
@@ -64,12 +73,14 @@ app.get('/api/day-revenue', async (req, res) => {
         let totalRevenue = 0;
         for (const transaction of transactionsForToday) {
             // Assuming each transaction has productId and quantitySold fields
-            const product = await Product.findById(transaction.productId);
+            const product = await Product.find().byId(transaction.productId);
             if (product) {
                 totalRevenue += product.price * transaction.quantitySold;
             }
         }
-
+        if (totalRevenue === null) {
+            totalRevenue = 0
+        }
         res.json({ totalRevenue });
     } catch (err) {
         res.status(500).json({ message: err.message });

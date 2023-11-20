@@ -19,8 +19,5 @@ const transactionSchema = new Schema({
     date: Date
 });
 
-const Product = mongoose.model("Product", productSchema);
-const Transaction = mongoose.model("Transaction", transactionSchema);
-
-module.exports = { Product, Transaction };
+module.exports = { productSchema, transactionSchema };
 
