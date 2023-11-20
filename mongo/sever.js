@@ -36,8 +36,6 @@ client.on("connect", () => {
 
      const product6 = new Product({productId: 6, name: 'Producto 6', price: 2, stock: 0})
      await product6.save().then(() => console.log("product 6 created"));
-     const transaction = new Transaction({productId: product6.productId, date: Date.now()})
-     await transaction.save()
     }
     else{
       console.log("Client not connected");
