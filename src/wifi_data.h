@@ -23,5 +23,3 @@
 
 //  wifi_data.h ends
 #endif
-
-
