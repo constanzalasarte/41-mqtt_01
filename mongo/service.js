@@ -39,8 +39,6 @@ app.get('/api/most-sold-products', async (req, res) => {
             mostSoldProducts.map(async (product) => {
                 const array = await Product.find().byId(product._id);
                 const productDetails = array[array.length-1];
-                console.log(productDetails)
-                console.log(product)
                 return { name: productDetails.name, count: product.count };
             })
         );
@@ -82,8 +80,6 @@ app.get('/api/day-revenue', async (req, res) => {
             const product = array[array.length-1]
             if (product) {
                 totalRevenue += product.price ;
-                // console.log(product.price);
-
             }
         }
         if (totalRevenue === null) {
@@ -115,7 +111,6 @@ app.get('/api/products', async (req, res) => {
         }
         const stockLimit = 6;
         const newQuantity = product.stock + quantity;
-        console.log(newQuantity)
         if (newQuantity > stockLimit) {
         return res.status(400).json({ error: 'La cantidad a reponer supera el límite permitido' });
         }
@@ -124,7 +119,6 @@ app.get('/api/products', async (req, res) => {
         res.status(200).json({ mensaje: 'Stock actualizado exitosamente' });
     } 
     catch (error) {
-      console.error(error);
       res.status(500).json({ error: 'Error interno del servidor' });
     }
   });

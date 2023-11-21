@@ -20,15 +20,17 @@ client.on("connect", () => {
   client.subscribe(config.mqtt.namespace, async (err) => {
     if (!err) {
      console.log("Client connected");
-     await Product.deleteMany()
-     await Transaction.deleteMany()
+     await Promise.all([
+        Product.deleteMany({}),
+        Transaction.deleteMany({}),
+     ]);
 
-     await new Product({productId: 1, name: 'Producto 1', price: 2, stock: 2}).save();
-     await new Product({productId: 2, name: 'Producto 2', price: 2, stock: 6}).save();
-     await new Product({productId: 3, name: 'Producto 3', price: 2, stock: 0}).save();
-     await new Product({productId: 4, name: 'Producto 4', price: 2, stock: 0}).save();
-     await new Product({productId: 5, name: 'Producto 5', price: 2, stock: 0}).save();
-     await new Product({productId: 6, name: 'Producto 6', price: 2, stock: 0}).save();
+     await new Product({productId: 1, name: 'Curitas', price: 5, stock: 6}).save();
+     await new Product({productId: 2, name: 'Ibuprofeno', price: 5, stock: 6}).save();
+     await new Product({productId: 3, name: 'Alcohol en gel', price: 5, stock: 6}).save();
+     await new Product({productId: 4, name: 'Gasas', price: 5, stock: 6}).save();
+     await new Product({productId: 5, name: 'Cinta porosa', price: 5, stock: 6}).save();
+     await new Product({productId: 6, name: 'Algodón', price: 5, stock: 6}).save();
 
     }
     else{

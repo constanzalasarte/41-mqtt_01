@@ -21,4 +21,3 @@ const transactionSchema = new Schema({
 });
 
 module.exports = { productSchema, transactionSchema };
-

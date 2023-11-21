@@ -48,18 +48,12 @@ static const char *subs[] =
 #if (SUB_LIST==0)
     "#",
 #elif (SUB_LIST==1)
-    "1/button1",
-    "1/button2",
-    "1/button3",
-    "1/button4",
-    "1/button5",
-    "1/button6",
-    "03/button1",
-    "03/button2",
-    "03/button3",
-    "03/button4",
-    "03/button5",
-    "03/button6",
+    "00/button1",
+    "00/button2",
+    "00/button3",
+    "00/button4",
+    "00/button5",
+    "00/button6",
 
 #elif (SUB_LIST==2)
     "+/clear",
@@ -87,7 +81,7 @@ static const char *subs[] =
  */
 
 #if (MQTT==0)                                       
-    #define BROKER_NAME "54.224.56.200"         //  Mosquitto in local network
+    #define BROKER_NAME "35.173.235.21"         //  Mosquitto in local network
     #define BROKER_PORT 1883
     #define BROKER_USER ""
     #define BROKER_PASS ""
