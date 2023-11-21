@@ -93,8 +93,8 @@ get_board_num(void)
 void
 init_hw(void)
 {
-    // for (int i = 0; i<NUMPUSH; ++i)
-        // pinMode(pushGPIO[i],INPUT_PULLUP);
+    for (int i = 0; i<NUMPUSH; ++i)
+        pinMode(pushGPIO[i],INPUT_PULLUP);
     #if 1    
     pinMode(PUSH1, INPUT_PULLUP);
     pinMode(PUSH2, INPUT_PULLUP);

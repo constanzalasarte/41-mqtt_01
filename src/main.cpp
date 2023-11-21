@@ -34,7 +34,6 @@ void loop(void) {
 
     if (buttonPressed == 1) {
         do_publish("button1", "Presionando button 1"); // Publish to topic for button 1
-
     } else if (buttonPressed == 2) {
         do_publish("button2", "Presionando button 2"); 
     } else if (buttonPressed == 3) {

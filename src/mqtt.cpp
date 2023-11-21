@@ -192,7 +192,12 @@ do_publish(const char *ptopic, const char *msg)
 
     tp[sizeof(tp)-1] = '\0';
     snprintf( tp, sizeof(tp)-1, "%s/%s", tp_string, ptopic );
-    client.publish( tp, msg );
+   int result = client.publish(tp, msg);
+    if (result == 0) {
+        Serial.print("couldn't publish\n");
+        client_connect();
+    } 
+
     Serial.printf( "%s: %s %s\n\r", __FUNCTION__, tp, msg );
 }
 

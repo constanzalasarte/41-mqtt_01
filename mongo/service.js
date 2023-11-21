@@ -6,6 +6,8 @@ const mongoose = require('mongoose');
 const app = express();
 const moment = require('moment');
 
+app.use(express.json());
+
 var mongoUri = "mongodb://admin:admin@" + config.mongodb.hostname + "/" + config.mongodb.database;
 
 mongoose.connect(mongoUri)
@@ -35,8 +37,11 @@ app.get('/api/most-sold-products', async (req, res) => {
 
         const mostSoldProductsDetails = await Promise.all(
             mostSoldProducts.map(async (product) => {
-                const productDetails = await Product.find().byId(product._id);
-                return { ...productDetails.toObject(), count: product.count };
+                const array = await Product.find().byId(product._id);
+                const productDetails = array[array.length-1];
+                console.log(productDetails)
+                console.log(product)
+                return { name: productDetails.name, count: product.count };
             })
         );
 
@@ -73,9 +78,12 @@ app.get('/api/day-revenue', async (req, res) => {
         let totalRevenue = 0;
         for (const transaction of transactionsForToday) {
             // Assuming each transaction has productId and quantitySold fields
-            const product = await Product.find().byId(transaction.productId);
+            const array = await Product.find().byId(transaction.productId)
+            const product = array[array.length-1]
             if (product) {
-                totalRevenue += product.price * transaction.quantitySold;
+                totalRevenue += product.price ;
+                // console.log(product.price);
+
             }
         }
         if (totalRevenue === null) {
@@ -87,6 +95,39 @@ app.get('/api/day-revenue', async (req, res) => {
     }
 });
 
+app.get('/api/products', async (req, res) => {
+    try {
+      const products = await Product.find({});
+      res.json(products);
+    } catch (error) {
+      res.status(500).json({ error: 'Internal Server Error' });
+    }
+  });
+  
+  app.post('/api/restock',async(req,res)=>{
+    const { productId, quantity } = req.body;
+
+    try {
+        const array = await Product.find().byId(productId)
+        const product = array[array.length-1]
+        if (!product) {
+          return res.status(404).json({ error: 'Producto no encontrado' });
+        }
+        const stockLimit = 6;
+        const newQuantity = product.stock + quantity;
+        console.log(newQuantity)
+        if (newQuantity > stockLimit) {
+        return res.status(400).json({ error: 'La cantidad a reponer supera el límite permitido' });
+        }
+        product.stock = newQuantity;
+        await product.save();
+        res.status(200).json({ mensaje: 'Stock actualizado exitosamente' });
+    } 
+    catch (error) {
+      console.error(error);
+      res.status(500).json({ error: 'Error interno del servidor' });
+    }
+  });
 
 const PORT = 8080;
 app.listen(PORT, () => console.log(`Backend running in port ${PORT}`));

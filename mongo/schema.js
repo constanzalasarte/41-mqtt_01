@@ -16,6 +16,7 @@ const productSchema = new Schema({
 
 const transactionSchema = new Schema({
     productId: Number,
+    productName: String,
     date: Date
 });
 
